@@ -1,0 +1,61 @@
+#!/usr/bin/python
+
+import os
+
+import git
+import vagrant
+
+from fabric.api import env, execute, task, run
+
+
+repo = git.Repo(os.getcwd())
+
+diff_objects = repo.head.commit.diff('master')
+
+path_set = set()
+
+for diff_object in diff_objects:
+    path_set.add(diff_object.a_rawpath)
+    path_set.add(diff_object.b_rawpath)
+
+final_path = []
+
+for path in path_set:
+    if final_path == []:
+        final_path = path.split('/')
+        continue
+
+    current_path = path.split('/')
+
+    for idx, dir_name in enumerate(current_path):
+        if idx <= (len(final_path) - 1) and dir_name == final_path[idx]:
+            # We still have things in common
+            continue
+        if idx > (len(final_path) - 1):
+            break
+        if dir_name != final_path[idx]:
+            final_path = final_path[0:idx]
+
+# Check for makefile on path
+while True:
+    compile_dir = "/".join(final_path)
+    makefile_dir = os.getcwd() + '/' + compile_dir
+    print "Looking for makefile in " + makefile_dir
+    files_in_dir = os.listdir(makefile_dir)
+    if 'Makefile' in files_in_dir:
+        break
+    final_path = final_path[0:-1]
+print "Compiling everything in " + compile_dir
+
+@task
+def mytask():
+    run('cd /sources/everest/' + compile_dir + ' && make all')
+
+
+v = vagrant.Vagrant()
+env.hosts = [v.user_hostname_port()]
+env.key_filename = v.keyfile()
+env.disable_known_hosts = True
+execute(mytask)
+
+
