@@ -1,61 +1,147 @@
 #!/usr/bin/python
 
 import os
+import subprocess
+import sys
 
-import git
 import vagrant
 
+from cStringIO import StringIO
 from fabric.api import env, execute, task, run
 
+# Get the directory where things must be compiled
+# Rework this - do `git diff master` on command line, not through the package
 
-repo = git.Repo(os.getcwd())
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
-diff_objects = repo.head.commit.diff('master')
+def run_vagrant_task(defined_task):
+    failed_msg = ""
+    stdout_backup = sys.stdout
+    stderr_backup = sys.stderr
+    sys.stdout = StringIO()
+    sys.stderr = StringIO()
+    try:
+        execute(defined_task)
+    except SystemExit as e:
+        failed_msg = e.message
+    out = sys.stdout.getvalue()
+    err = sys.stderr.getvalue()
+    sys.stdout.close()
+    sys.stderr.close()
+    sys.stdout = stdout_backup
+    sys.stderr = stderr_backup
 
-path_set = set()
+    if failed_msg:
+        print bcolors.FAIL + failed_msg + bcolors.ENDC
 
-for diff_object in diff_objects:
-    path_set.add(diff_object.a_rawpath)
-    path_set.add(diff_object.b_rawpath)
+    print bcolors.OKGREEN + "Output: \n" + bcolors.ENDC + out.rstrip() + "\n"
 
-final_path = []
+    if not failed_msg:
+        print bcolors.OKGREEN + "No errors" + bcolors.ENDC
+        
+    return out
 
-for path in path_set:
-    if final_path == []:
-        final_path = path.split('/')
-        continue
+def main():
+    path_set = set()
 
-    current_path = path.split('/')
+    git_diff = subprocess.check_output(["git", "--no-pager", "diff", "--name-only", "master"])
+    git_diff = git_diff.split('\n')
+    git_diff.remove('')
+    print "Diff'd files found: " + str(git_diff)
+    for path in git_diff:
+        path_set.add(path)
 
-    for idx, dir_name in enumerate(current_path):
-        if idx <= (len(final_path) - 1) and dir_name == final_path[idx]:
-            # We still have things in common
+    # print path_set
+    final_path = []
+
+    for path in path_set:
+        if final_path == []:
+            final_path = path.split('/')
             continue
-        if idx > (len(final_path) - 1):
-            break
-        if dir_name != final_path[idx]:
-            final_path = final_path[0:idx]
 
-# Check for makefile on path
-while True:
-    compile_dir = "/".join(final_path)
-    makefile_dir = os.getcwd() + '/' + compile_dir
-    print "Looking for makefile in " + makefile_dir
-    files_in_dir = os.listdir(makefile_dir)
-    if 'Makefile' in files_in_dir:
-        break
-    final_path = final_path[0:-1]
-print "Compiling everything in " + compile_dir
+        current_path = path.split('/')
 
-@task
-def mytask():
-    run('cd /sources/everest/' + compile_dir + ' && make all')
+        for idx, dir_name in enumerate(current_path):
+            if idx <= (len(final_path) - 1) and dir_name == final_path[idx]:
+                # We still have things in common
+                continue
+            if idx > (len(final_path) - 1):
+                break
+            if dir_name != final_path[idx]:
+                final_path = final_path[0:idx]
 
 
-v = vagrant.Vagrant()
-env.hosts = [v.user_hostname_port()]
-env.key_filename = v.keyfile()
-env.disable_known_hosts = True
-execute(mytask)
+    # Check for makefile on path
+    while True:
+        compile_dir = "/".join(final_path)
+        makefile_dir = os.getcwd() + '/' + compile_dir
+        print "Looking for makefile in " + makefile_dir
+        try:
+            files_in_dir = os.listdir(makefile_dir)
+            if 'Makefile' in files_in_dir:
+                break
+        except OSError:
+            pass
+        final_path = final_path[0:-1]
+
+    print "Compiling everything in " + compile_dir
 
 
+    # Actually do the compiling, and for kicks and giggles, run dialyzer if we need it
+    @task
+    def compile_task():
+        run('cd /sources/everest/' + compile_dir + ' && make all')
+
+    @task
+    def dialyzer_task():
+        run('cd /sources/everest/mgmt/controller/server && make dialyzer')
+
+    initial_state_vagrant_running = False
+    vagrant_instance_name = 'default'
+    v = vagrant.Vagrant()
+    statuses = v.status()
+
+    for status in statuses:
+        if status.state == 'running':
+            initial_state_vagrant_running = True
+            vagrant_instance_name = status.name
+
+    if not initial_state_vagrant_running:
+        v.up()
+
+    env.hosts = [v.user_hostname_port(vm_name=vagrant_instance_name)]
+    env.key_filename = v.keyfile(vm_name=vagrant_instance_name)
+    env.disable_known_hosts = True
+
+    out = run_vagrant_task(compile_task)
+    print "Done compiling, starting dialyzer"
+    run_vagrant_task(dialyzer_task)
+    print "Done dialyzer, continuing."
+
+    filenames = set()
+    log_lines = out.split('\n')
+    for line in log_lines:
+        if line.find('Compiled ') != -1:
+            compiled_filename_index = line.find('Compiled') + 9
+            filenames.add(line[compiled_filename_index:-4] + '.beam')
+
+    if not initial_state_vagrant_running:
+        v.halt()
+
+    # Find all these files
+
+    # SCP all these files to the host passed in as a runtime arg
+    for filename in filenames:
+        print "Compiled " + compile_dir + '/' + filename
+        # subprocess.Popen(["scp", compile_dir + '/' + filename])
+
+if __name__ == "__main__":
+    main()

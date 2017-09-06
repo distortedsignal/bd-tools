@@ -1,0 +1,8 @@
+#!/usr/bin/expect -f
+
+set timeout 20
+
+spawn ssh [lindex $argv 0]
+expect "password:*"
+send "admin123\r"
+interact

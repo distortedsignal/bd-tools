@@ -1,0 +1,2 @@
+stop  bds-controller
+start bds-controller

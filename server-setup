@@ -1,0 +1,3 @@
+scpexp ~/.utils/bounce-server $1
+scpexp ~/.utils/force-move $1
+scpexp ~/.utils/helper.erl $1

@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+
+set host [lindex $argv 0]
+
+cd /Users/tom/Documents/src/BlueData/everest/mgmt/controller/webui
+spawn ./webui_sync.sh $host
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+expect "password:"
+send "admin123\r"
+interact
