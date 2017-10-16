@@ -1,0 +1,6 @@
+VBoxManage
+*.json
+*amd64
+/*/
+*.beam
+kubectl

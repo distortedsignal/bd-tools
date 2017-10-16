@@ -1,0 +1,9 @@
+export PSID=`ps -a | grep -Po "(\d+).*to_erl" | sed -e 's/\s.*//g'`
+
+if [[ "$PSID" != "" ]]; then
+    echo "Got PSID:"
+    echo $PSID
+    kill $PSID
+fi
+
+/opt/bluedata/common-install/bd_mgmt/bin/bd_mgmt attach
