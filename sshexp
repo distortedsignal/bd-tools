@@ -2,7 +2,7 @@
 
 set timeout 20
 
-spawn ssh [lindex $argv 0]
+spawn ssh root@[lindex $argv 0]
 expect "password:*"
 send "admin123\r"
 interact
