@@ -1,2 +1,8 @@
-stop  bds-controller
-start bds-controller
+if [[ $(which systemctl > /dev/null 2>&1) ]]; then
+    # This works on 7.x
+    systemctl restart bds-controller
+else
+    # This only works on 6.x, we need to make it work on 7.x
+    stop  bds-controller
+    start bds-controller
+fi
