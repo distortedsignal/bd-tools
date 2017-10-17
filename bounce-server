@@ -1,4 +1,4 @@
-if [[ $(which systemctl > /dev/null 2>&1) ]]; then
+if [[ $(which systemctl) ]]; then
     # This works on 7.x
     systemctl restart bds-controller
 else
