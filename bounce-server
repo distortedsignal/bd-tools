@@ -6,3 +6,6 @@ else
     stop  bds-controller
     start bds-controller
 fi
+
+# Sleep to give node time to come back up.
+sleep 3
