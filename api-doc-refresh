@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+import sys
+
+import vagrant
+
+from cStringIO import StringIO
+from fabric.api import env, execute, task, run
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+def run_vagrant_task(defined_task):
+    failed_msg = ""
+    stdout_backup = sys.stdout
+    stderr_backup = sys.stderr
+    sys.stdout = StringIO()
+    sys.stderr = StringIO()
+    try:
+        execute(defined_task)
+    except SystemExit as e:
+        failed_msg = e.message
+    out = sys.stdout.getvalue()
+    err = sys.stderr.getvalue()
+    sys.stdout.close()
+    sys.stderr.close()
+    sys.stdout = stdout_backup
+    sys.stderr = stderr_backup
+
+    if failed_msg:
+        print bcolors.FAIL + failed_msg + bcolors.ENDC
+
+    print bcolors.OKGREEN + "Output: \n" + bcolors.ENDC + out.rstrip() + "\n"
+
+    if not failed_msg:
+        print bcolors.OKGREEN + "No errors" + bcolors.ENDC
+        
+    return out
+
+def main():
+
+    @task
+    def compile_task():
+        run('cd /sources/everest/mgmt/controller/server && make apidocs')
+
+    vagrant_instance_name = 'default'
+    v = vagrant.Vagrant()
+    statuses = v.status()
+
+    for status in statuses:
+        if status.state == 'running':
+            initial_state_vagrant_running = True
+            vagrant_instance_name = status.name
+
+    if not initial_state_vagrant_running:
+        v.up()
+
+    env.hosts = [v.user_hostname_port(vm_name=vagrant_instance_name)]
+    env.key_filename = v.keyfile(vm_name=vagrant_instance_name)
+    env.disable_known_hosts = True
+
+    out = run_vagrant_task(compile_task)
+    print out
+    done = subprocess.check_output(["api-doc-move", sys.argv[1]])
+    print done
+
+if __name__ == '__main__':
+    main()
+
