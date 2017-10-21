@@ -5,7 +5,7 @@ VBoxManage
 *.beam
 kubectl
 divider
-download
+download.sh
 idea
 imgcat
 imgls
