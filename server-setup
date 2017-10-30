@@ -1,4 +1,4 @@
-scpexp ~/.utils/bounce-server $1
-scpexp ~/.utils/force-move $1
-scpexp ~/.utils/helper.erl $1
-scpexp ~/.utils/bd-console $1
+scpexp $1 ~/.utils/bounce-server
+scpexp $1 ~/.utils/force-move
+scpexp $1 ~/.utils/helper.erl
+scpexp $1 ~/.utils/bd-console
