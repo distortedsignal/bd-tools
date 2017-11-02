@@ -8,7 +8,7 @@ import sys
 (_, dir_list, _) = os.walk(os.getcwd()).next()
 
 # get all directories that contain bin files
-valid_dirs = filter(lambda x: x.is_digit(), dir_list)
+valid_dirs = filter(lambda x: x.isdigit(), dir_list)
 
 if len(valid_dirs) == 0:
     print "No valid installers available"
