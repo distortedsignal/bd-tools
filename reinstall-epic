@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+import subprocess
+import sys
+
+(_, dir_list, _) = os.walk(os.getcwd()).next()
+
+# get all directories that contain bin files
+valid_dirs = filter(lambda x: x.is_digit(), dir_list)
+
+if len(valid_dirs) == 0:
+    print "No valid installers available"
+    sys.exit(0)
+
+# remove all early dirs
+good_installer = valid_dirs[-1]
+valid_dirs = valid_dirs[:-1]
+
+for valid_dir in valid_dirs:
+    shutil.rmtree(valid_dir)
+
+# run erase
+(_, _, file_list) = os.walk(os.getcwd() + "/" + good_installer).next()
+
+if len(file_list) != 1:
+    print "Bad file list length"
+    sys.exit(0)
+
+subprocess.check_output([os.getcwd() + "/" + good_installer + "/" + file_list[0], "--erase"])
+
+subprocess.check_output([os.getcwd() + "/" + good_installer + "/" + file_list[0], "-s"])
+
