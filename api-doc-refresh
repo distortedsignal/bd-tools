@@ -53,6 +53,7 @@ def main():
         run('cd /sources/everest/mgmt/controller/server && make apidocs')
 
     vagrant_instance_name = 'default'
+    initial_state_vagrant_running = False
     v = vagrant.Vagrant()
     statuses = v.status()
 
