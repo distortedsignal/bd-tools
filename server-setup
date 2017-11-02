@@ -2,3 +2,4 @@ scpexp $1 ~/.utils/bounce-server
 scpexp $1 ~/.utils/force-move
 scpexp $1 ~/.utils/helper.erl
 scpexp $1 ~/.utils/bd-console
+scpexp $1 ~/.utils/reinstall-epic
