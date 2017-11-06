@@ -21,12 +21,14 @@ quiet_logging() ->
     bd_logger_app:disable_console("AUDIT"),
     bd_logger_app:disable_console("MGMT").
 
+reload_modules(ModuleList) ->
+    reload_modules(ModuleList, []).
 
-reload_modules([]) ->
-    [];
-reload_modules([ H | T ]) ->
-    reload_modules(H) ++ reload_modules(T);
-reload_modules(ModuleName) ->
+reload_modules([], ReloadedModules) ->
+    ReloadedModules;
+reload_modules([ H | T ], ReloadedModules) ->
+    reload_modules(T, reload_module(H) ++ ReloadedModules);
+reload_module(ModuleName) ->
     code:purge(ModuleName),
     code:load_file(ModuleName),
     [ModuleName].
