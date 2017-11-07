@@ -6,6 +6,8 @@
 
 -export([loud_logging/0, quiet_logging/0]).
 
+-export([dump_mnesia/0, traverse_table_and_show/1]).
+
 -on_load(load_helper_module/0).
 
 load_helper_module() ->
@@ -55,5 +57,25 @@ start_application(Application) ->
             io:fwrite("Failed to load ~s, application ~s not loaded.\n", [Application, DepsApplication]),
             start_application(DepsApplication),
             start_application(Application)
+    end.
+
+dump_mnesia() ->
+    traverse_table_and_show(bdm_config).
+
+traverse_table_and_show(Table_name)->
+    Iterator =  fun(Rec,_)->
+        case Rec of
+            {_, catalog_feeds, _} ->
+                io:format("{bdm_config, catalog_feeds, [long]}~n");
+            _ ->
+                io:format("~p~n",[Rec])
+        end,
+        []
+    end,
+    case mnesia:is_transaction() of
+        true -> mnesia:foldl(Iterator,[],Table_name);
+        false ->
+            Exec = fun({Fun,Tab}) -> mnesia:foldl(Fun, [],Tab) end,
+            mnesia:activity(transaction,Exec,[{Iterator,Table_name}],mnesia_frag)
     end.
 
