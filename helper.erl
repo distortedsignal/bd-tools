@@ -27,7 +27,8 @@ reload_modules(ModuleList) ->
 reload_modules([], ReloadedModules) ->
     ReloadedModules;
 reload_modules([ H | T ], ReloadedModules) ->
-    reload_modules(T, reload_module(H) ++ ReloadedModules);
+    reload_modules(T, reload_module(H) ++ ReloadedModules).
+
 reload_module(ModuleName) ->
     code:purge(ModuleName),
     code:load_file(ModuleName),
