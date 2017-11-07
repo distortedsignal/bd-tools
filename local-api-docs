@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd $everest/mgmt/controller/server/apidocs
+python -m SimpleHTTPServer $1
