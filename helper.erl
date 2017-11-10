@@ -23,8 +23,10 @@ quiet_logging() ->
     bd_logger_app:disable_console("AUDIT"),
     bd_logger_app:disable_console("MGMT").
 
-reload_modules(ModuleList) ->
-    reload_modules(ModuleList, []).
+reload_modules(Modules) when is_atom(Modules) ->
+    reload_module(Modules);
+reload_modules(Modules) ->
+    reload_modules(Modules, []).
 
 reload_modules([], ReloadedModules) ->
     ReloadedModules;
@@ -34,6 +36,26 @@ reload_modules([ H | T ], ReloadedModules) ->
 reload_module(ModuleName) ->
     code:purge(ModuleName),
     code:load_file(ModuleName),
+    {ok, [[Home]]} = init:get_arguemnt(home),
+    {ok, File} = file:open(Home ++ "/refresh_modules.log", append),
+    {{Year, Month, Day}, {Hour, Minute, Sec}} = calendar:now_to_universal_time(os:timestamp()),
+    F = fun(A) ->
+        float_to_binary(A)
+    end,
+    TimeBinary = <<"[">> ++
+                            F(Year) ++
+                            <<"-">> ++
+                            F(Month) ++
+                            <<"-">> ++
+                            F(Day) ++
+                        <<" ">> ++
+                            F(Hour) ++
+                            <<":">> ++
+                            F(Minute) ++
+                            <<":">> ++
+                            F(Sec) ++
+                 <<"] ">>,
+    file:write(File, TimeBinary ++ atom_to_binary(ModuleName, utf8)),
     [ModuleName].
 
 reload_server([]) ->
