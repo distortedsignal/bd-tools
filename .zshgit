@@ -1,0 +1,16 @@
+alias gnp='git --no-pager'
+alias files-changed='gnp diff --name-only'
+alias fix-rebase='subl $(files-changed)'
+
+alias grbkd='git rebase --committer-date-is-author-date'
+
+function pyf-branch () {
+    pyflakes $(files-changed $1 | grep ".py")
+}
+
+function move-changed () {
+    for CHANGEPATH in $(files-changed); do
+        BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
+        scpexp $1 $everest/$BEAMPATH
+    done
+}
