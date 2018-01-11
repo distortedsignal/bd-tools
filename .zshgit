@@ -9,8 +9,19 @@ function pyf-branch () {
 }
 
 function move-changed () {
-    for CHANGEPATH in $(files-changed); do
-        BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
-        scpexp $1 $everest/$BEAMPATH
-    done
+    if [ $# -eq "1" ]
+    then
+        for CHANGEPATH in $(files-changed); do
+            BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
+            scpexp $1 $everest/$BEAMPATH
+        done
+    fi
+
+    if [ $# -eq "2" ]
+    then
+        for CHANGEPATH in $(files-changed $2); do
+            BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
+            scpexp $1 $everest/$BEAMPATH
+        done
+    fi
 }
