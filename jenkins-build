@@ -47,19 +47,26 @@ current_repo = Repo(path=os.getcwd())
 branch_name = current_repo.head.ref.name
 
 local_head = current_repo.head
-fetch_info = current_repo.remote().fetch(refspec=branch_name)[0]
+remote_branch = current_repo.remote()
+fetch_info = remote_branch.fetch(refspec=branch_name)[0]
 
 if local_head.commit.hexsha != fetch_info.commit.hexsha:
-    print "At some point, prompt for push"
+    push_y_n = input('You have un-pushed commits to your remote branch - would you like to push? [y/N]')
+    if 'y' == push_y_n.lower() or 'yes' == push_y_n.lower():
+        print "Pushing changes and building"
+        remote_branch.push()
+
 
 # Load UN/PW from file.
 # Load job details from a file.
 script_path = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(script_path, 'un_pw.json')) as auth_file, \
         open(os.path.join(script_path, 'default_jenkins_build.json')) as build_file:
+
     if print_config:
         print build_file.read()
         sys.exit(0)
+
     auth_dict = json.load(auth_file)
     server = jenkins.Jenkins('http://10.3.47.5',
                              username=arg_dict.get('username', auth_dict['username']),
@@ -76,4 +83,3 @@ with open(os.path.join(script_path, 'un_pw.json')) as auth_file, \
 
     # Token unnecessary
     server.build_job(job_name, parameters=values)
-
