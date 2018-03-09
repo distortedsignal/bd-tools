@@ -1,0 +1,36 @@
+#!/usr/bin/python
+
+import os
+import json
+
+import jenkins
+
+from git.repo.base import Repo
+
+current_repo = Repo(path=os.getcwd())
+branch_name = current_repo.head.ref.name
+
+local_head = current_repo.head
+fetch_info = current_repo.remote().fetch(refspec=branch_name)[0]
+
+if local_head.commit.hexsha != fetch_info.commit.hexsha:
+    print "At some point, prompt for push"
+
+# Load UN/PW from file.
+# Load job details from a file.
+script_path = os.path.dirname(os.path.realpath(__file__))
+with open(os.path.join(script_path, 'un_pw.json')) as auth_file, \
+        open(os.path.join(script_path, 'default_jenkins_build.json')) as build_file:
+    auth_dict = json.load(auth_file)
+    server = jenkins.Jenkins('http://10.3.47.5',
+                             username=auth_dict['username'],
+                             password=auth_dict['password']
+                            )
+
+    build_dict = json.load(build_file)
+    default_values = build_dict['Bluedata_bundle']
+    default_values['branch'] = branch_name
+
+    # Token unnecessary
+    server.build_job("Bluedata_bundle", parameters=default_values)
+
