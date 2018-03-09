@@ -7,6 +7,7 @@
 import os
 import sys
 import json
+import webbrowser
 
 import jenkins
 
@@ -83,3 +84,7 @@ with open(os.path.join(script_path, 'un_pw.json')) as auth_file, \
 
     # Token unnecessary
     server.build_job(job_name, parameters=values)
+    build_url = server.get_job_info(job_name)['builds'][0]['url'].replace('jenkins.lab.bluedata.com:8080', '10.3.47.5')
+    console_url = build_url + 'console'
+    webbrowser.open(console_url)
+
