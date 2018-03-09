@@ -1,11 +1,43 @@
 #!/usr/bin/python
 
+# jenkins-build --tmp_args="{'asdlkjfasdf':'aldkfjlaksdfj'}" --username="" --password="" job_name
+# jenkins-build -a="" -u="" -p="" job_name
+# jenkins-build
+
 import os
+import sys
 import json
 
 import jenkins
 
 from git.repo.base import Repo
+
+def decode_arg_pair(arg_pair):
+    if arg_pair[0] == 'a':
+        return ('tmp_args', arg_pair[1])
+    elif arg_pair[0] == 'u':
+        return ('username', arg_pair[1])
+    elif arg_pair[0] == 'p':
+        return ('password', arg_pair[1])
+    else:
+        return ('', '')
+
+arg_list = sys.argv[1:]
+job_name = 'Bluedata_bundle'
+arg_dict = {}
+
+for arg in arg_list:
+    arg_pair = ()
+    if arg[0] != '-':
+        job_name = arg
+        continue
+    elif arg[1] == '-':
+        arg_pair = arg[2:].split('=')
+    else:
+        arg_pair = arg[1:].split('=')
+        arg_pair = decode_arg_pair(arg_pair)
+    arg_dict[arg_pair[0]] = arg_pair[1]
+
 
 current_repo = Repo(path=os.getcwd())
 branch_name = current_repo.head.ref.name
@@ -23,14 +55,18 @@ with open(os.path.join(script_path, 'un_pw.json')) as auth_file, \
         open(os.path.join(script_path, 'default_jenkins_build.json')) as build_file:
     auth_dict = json.load(auth_file)
     server = jenkins.Jenkins('http://10.3.47.5',
-                             username=auth_dict['username'],
-                             password=auth_dict['password']
+                             username=arg_dict.get('username', auth_dict['username']),
+                             password=arg_dict.get('password', auth_dict['password'])
                             )
 
     build_dict = json.load(build_file)
-    default_values = build_dict['Bluedata_bundle']
-    default_values['branch'] = branch_name
+    tmp_args_string = arg_dict.get('tmp_args', '{}').replace("'", '"')
+    tmp_args_dict = json.loads(tmp_args_string)
+
+    values = build_dict[job_name]
+    values['branch'] = branch_name
+    values.update(tmp_args_dict)
 
     # Token unnecessary
-    server.build_job("Bluedata_bundle", parameters=default_values)
+    server.build_job(job_name, parameters=values)
 
