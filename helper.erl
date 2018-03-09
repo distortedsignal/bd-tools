@@ -8,12 +8,23 @@
 
 -export([dump_mnesia/0, traverse_table_and_show/1]).
 
+-export([atom_test/0]).
+
 -on_load(load_helper_module/0).
 
 load_helper_module() ->
     erlang:system_flag(backtrace_depth, 100),
     % Do something here to load record definitions eventually.
     ok.
+
+atom_test() ->
+    atom_test(50000).
+
+atom_test(0) -> ok;
+atom_test(K) ->
+    A = list_to_atom("test"),
+    io:fwrite(atom_to_list(A)),
+    atom_test(K-1).
 
 loud_logging() ->
     bd_logger_app:enable_console("AUDIT"),

@@ -1,6 +1,7 @@
 alias gnp='git --no-pager'
 alias files-changed='gnp diff --name-only'
 alias fix-rebase='subl $(files-changed)'
+alias git-recents='git branch -v --sort=-committerdate'
 
 alias grbkd='git rebase --committer-date-is-author-date'
 
@@ -11,7 +12,7 @@ function pyf-branch () {
 function move-changed () {
     if [ $# -eq "1" ]
     then
-        for CHANGEPATH in $(files-changed); do
+        for CHANGEPATH in $(files-changed | grep "erl"); do
             BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
             scpexp $1 $everest/$BEAMPATH
         done
@@ -19,7 +20,7 @@ function move-changed () {
 
     if [ $# -eq "2" ]
     then
-        for CHANGEPATH in $(files-changed $2); do
+        for CHANGEPATH in $(files-changed $2 | grep "erl"); do
             BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
             scpexp $1 $everest/$BEAMPATH
         done
