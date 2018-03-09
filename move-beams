@@ -1,0 +1,3 @@
+for Beam in $( ls | grep -e "\.beam$" ); do
+    ./force-move $Beam
+done
