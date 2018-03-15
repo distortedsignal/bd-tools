@@ -4,5 +4,8 @@ fi
 
 for Beam in $( ls | grep -e "\.beam$" ); do
     ./force-move $Beam
-    export BEAM_UPDATES="$BEAM_UPDATES $Beam"
+    export Beam_Atom=`echo $Beam | sed -e 's/\.beam$//g'`
+    export BEAM_UPDATES="$BEAM_UPDATES $Beam_Atom"
 done
+
+echo $BEAM_UPDATES > /root/beam_updates

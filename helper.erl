@@ -35,13 +35,18 @@ quiet_logging() ->
     bd_logger_app:disable_console("MGMT").
 
 refresh_beams() ->
-    BeamsString = os:getenv("BEAM_UPDATES"),
-    ModuleAsStringList = string:split(BeamsString, " "),
+    BeamsString = case file:read_file("/root/beam_updates") of
+        {error, _} -> "";
+        {ok, BeamBinString} ->
+            Tmp = binary_to_list(BeamBinString),
+            lists:filter(fun(C) -> not lists:member(C, "\n") end, Tmp)
+    end,
+    ModuleAsStringList = string:tokens(BeamsString, " "),
     ModuleAsAtomList = modules_string_to_atom(ModuleAsStringList, []),
     ReloadedModulesLength = length(reload_modules(ModuleAsAtomList)),
     ReloadedModulesLength = length(ModuleAsAtomList),
-    true = os:putenv("BEAM_UPDATES", ""),
-    ok.
+    ok = file:delete("/root/beam_updates"),
+    ModuleAsAtomList.
 
 
 modules_string_to_atom([], AtomList) -> AtomList;
