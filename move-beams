@@ -1,3 +1,8 @@
+if [ -z $BEAM_UPDATES ]; then
+    export BEAM_UPDATES="";
+fi
+
 for Beam in $( ls | grep -e "\.beam$" ); do
     ./force-move $Beam
+    export BEAM_UPDATES="$BEAM_UPDATES $Beam"
 done

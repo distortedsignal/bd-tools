@@ -1,6 +1,6 @@
 -module(helper).
 
--export([reload_modules/1, reload_server/1]).
+-export([reload_modules/1, reload_server/1, refresh_beams/0]).
 
 -export([start_application/1]).
 
@@ -33,6 +33,20 @@ loud_logging() ->
 quiet_logging() ->
     bd_logger_app:disable_console("AUDIT"),
     bd_logger_app:disable_console("MGMT").
+
+refresh_beams() ->
+    BeamsString = os:getenv("BEAM_UPDATES"),
+    ModuleAsStringList = string:split(BeamsString, " "),
+    ModuleAsAtomList = modules_string_to_atom(ModuleAsStringList, []),
+    ReloadedModulesLength = length(reload_modules(ModuleAsAtomList)),
+    ReloadedModulesLength = length(ModuleAsAtomList),
+    true = os:putenv("BEAM_UPDATES", ""),
+    ok.
+
+
+modules_string_to_atom([], AtomList) -> AtomList;
+modules_string_to_atom([[] | T], AtomList) -> modules_string_to_atom(T, AtomList);
+modules_string_to_atom([H | T], AtomList) -> modules_string_to_atom(T, [list_to_atom(H) | AtomList]).
 
 reload_modules(ModuleList) ->
     reload_modules(ModuleList, []).
