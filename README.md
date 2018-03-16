@@ -5,7 +5,7 @@ A few tools that I'm using at my job at BlueData - feel free to make suggestions
 Here's a function reference, and where to find the tools if you want to modify them.
 
 Tool Name | Location | Explanation 
-==========|==========|============
+----------|----------|------------
 `sshexp`  | sshexp | SSH into hosts using a standard set of credentials
 `scpexp`  | scpexp | Send a file to a host using a standard set of credentials
 `reset-web` | reset-web | Update python/js/html files on a remote EPIC host with standard credentials
