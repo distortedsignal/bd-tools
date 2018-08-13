@@ -10,6 +10,11 @@
 
 -export([atom_test/0]).
 
+-export([add_logging/1, add_many_logging/1]).
+
+% Copy of reg_level_info record found in io/base/apps/bd_logger/include/bd_logger.hrl
+-record(reg_level_info, {level_string, level_id, enabled, callback_module}).
+
 -on_load(load_helper_module/0).
 
 load_helper_module() ->
@@ -33,6 +38,21 @@ loud_logging() ->
 quiet_logging() ->
     bd_logger_app:disable_console("AUDIT"),
     bd_logger_app:disable_console("MGMT").
+
+add_many_logging([]) -> ok;
+add_many_logging([LevelAtom | LevelAtomList]) ->
+    add_logging(LevelAtom),
+    add_many_logging(LevelAtomList).
+
+add_logging(LevelAtom) ->
+    NewLevelInfo = #reg_level_info{
+        level_string=LevelAtom,
+        level_id=LevelAtom,
+        enabled=true,
+        callback_module=syslog_nif_impl},
+    bd_logger_app:register_levels([NewLevelInfo]),
+    bd_logger_app:enable_levels("MGMT", [LevelAtom]),
+    bd_logger_app:enable_levels("AUDIT", [LevelAtom]).
 
 refresh_beams() ->
     BeamsString = case file:read_file("/root/beam_updates") of

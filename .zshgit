@@ -1,7 +1,6 @@
 alias gnp='git --no-pager'
 alias files-changed='gnp diff --name-only'
 alias fix-rebase='subl $(files-changed)'
-alias git-recents='git branch -v --sort=-committerdate'
 
 alias grbkd='git rebase --committer-date-is-author-date'
 
@@ -24,5 +23,14 @@ function move-changed () {
             BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/')
             scpexp $1 $everest/$BEAMPATH
         done
+    fi
+}
+
+function git-recents () {
+    if [ $# -eq "1" ]
+    then
+        git branch -v --sort=-committerdate | head -n $1
+    else
+        git branch -v --sort=-committerdate
     fi
 }

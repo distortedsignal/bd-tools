@@ -1,0 +1,5 @@
+tar -zxvf /opt/bluedata/catalog/postconfig/userconfig.tgz
+cp -f auth.py userconfig
+rm -f userconfig.tgz
+tar -zcvf userconfig.tgz userconfig
+cp userconfig.tgz /opt/bluedata/catalog/postconfig
