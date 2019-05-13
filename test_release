@@ -1,0 +1,20 @@
+
+import os
+import subprocess
+
+try:
+    import setuptools, wheel, twine
+except:
+    print('installing release dependencies')
+    subprocess.check_output(['pip', 'install', 'setuptools', 'wheel', 'twine'])
+
+output = subprocess.check_output(['python3.6', 'setup.py', 'sdist', 'bdist_wheel'])
+
+walk_out = os.walk('./dist')
+
+print(str(walk_out))
+
+for _, _, files in os.walk('./dist'):
+    for file in files:
+        print('test.pypi.org username:')
+        subprocess.check_output(['twine', 'upload', '--repository-url', 'https://test.pypi.org/legacy/', 'dist/'+file])
