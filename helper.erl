@@ -12,6 +12,10 @@
 
 -export([add_logging/1, add_many_logging/1]).
 
+-export([proc_mon/0]).
+
+-export([kill_process/1]).
+
 % Copy of reg_level_info record found in io/base/apps/bd_logger/include/bd_logger.hrl
 -record(reg_level_info, {level_string, level_id, enabled, callback_module}).
 
@@ -128,4 +132,17 @@ traverse_table_and_show(Table_name)->
             Exec = fun({Fun,Tab}) -> mnesia:foldl(Fun, [],Tab) end,
             mnesia:activity(transaction,Exec,[{Iterator,Table_name}],mnesia_frag)
     end.
+
+proc_mon() ->
+    spawn(fun proc_mon_int/0).
+
+proc_mon_int() ->
+    {{Year, Month, Day}, {Hour, Minute, Second}} = calendar:local_time(),
+    io:fwrite("~B-~B-~B ~B:~B:~B Live processes: ~B~n",
+        [Year, Month, Day, Hour, Minute, Second, length(processes())]),
+    timer:sleep(1000),
+    proc_mon_int().
+
+kill_process(P) ->
+    exit(P, kill).
 
