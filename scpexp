@@ -4,7 +4,7 @@ set timeout 20
 set filename [lindex $argv 1]
 set host [lindex $argv 0]
 
-spawn scp $filename root@$host:~
+spawn scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -C $filename root@$host:~
 expect "password:"
 send "admin123\r"
 interact

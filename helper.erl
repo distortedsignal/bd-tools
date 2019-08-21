@@ -138,7 +138,7 @@ proc_mon() ->
 
 proc_mon_int() ->
     {{Year, Month, Day}, {Hour, Minute, Second}} = calendar:local_time(),
-    io:fwrite("~B-~B-~B ~B:~B:~B Live processes: ~B~n",
+    io:fwrite("~4..0B-~2..0B-~2..0B ~2..0B:~2..0B:~2..0B Live processes: ~B~n",
         [Year, Month, Day, Hour, Minute, Second, length(processes())]),
     timer:sleep(1000),
     proc_mon_int().

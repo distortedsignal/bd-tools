@@ -2,7 +2,19 @@
 
 set timeout 20
 
-spawn ssh root@[lindex $argv 0]
-expect "password:*"
-send "admin123\r"
-interact
+if { [llength $argv] == 1 } {
+    spawn ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes root@[lindex $argv 0]
+    expect "password:*"
+    send "admin123\r"
+    interact
+} elseif { [llength $argv] == 2 } {
+    spawn ssh -i [lindex $argv 1] -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes root@[lindex $argv 0]
+    expect "password:*"
+    send "admin123\r"
+    interact
+} elseif { [llength $argv] == 3 } {
+    spawn ssh -i [lindex $argv 1] -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes [lindex $argv 2]@[lindex $argv 0]
+    expect "password:*"
+    send "admin123\r"
+    interact
+} else {}

@@ -24,7 +24,8 @@ include_dir_list = [
     '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/vm/vagent/bd_vagent/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/legacy_include'
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/legacy_include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_kube_authn/include'
 ]
 cmd_out_dir_list = ['-o', '/tmp']
 

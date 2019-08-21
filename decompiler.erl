@@ -12,18 +12,11 @@ decompdir(Dir) ->
     G = fun(Filename) -> string:substr(Filename, length(Filename) - 5) =:= "beam" end,
     FullFilepaths = lists:map(F, lists:filter(G, Filenames)),
     io:format("decompdir: ~p~n",[FullFilepaths]),
-    decompile(FullFilepaths).
+    lists:map(fun decompile/1, FullFilepaths).
 
 
-decompile([H|T]) ->
-    decompile_single_file(H),
-    decompile(T);
-decompile([]) ->
-    ok.
-
-
-decompile_single_file(Beam) ->
+decompile(Beam) ->
     io:format("decompile: ~p~n",[Beam]),
-    {ok,{_,[{abstract_code,{_,AC}}]}} = beam_lib:chunks(Beam,[abstract_code]),
-    io:fwrite("~s~n", [erl_prettypr:format(erl_syntax:form_list(AC))]).
+    {ok, {_, [{abstract_code, {_, A}}]}} = beam_lib:chunks(Beam, [abstract_code]),
+    io:fwrite("~s~n", [erl_prettypr:format(erl_syntax:form_list(A))]).
 
