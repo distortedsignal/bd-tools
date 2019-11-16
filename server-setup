@@ -7,3 +7,5 @@ scpexp $1 ~/.utils/move-beams
 scpexp $1 ~/.utils/decompiler.erl
 scpexp $1 ~/.utils/djangoshell
 scpexp $1 ~/.utils/nfs-exporter
+scpexp $1 ~/.vimrc
+scpexp $1 ~/.bashrc
