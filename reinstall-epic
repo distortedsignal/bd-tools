@@ -30,5 +30,5 @@ if len(file_list) != 1:
 
 subprocess.check_output([os.getcwd() + "/" + good_installer + "/" + file_list[0], "--erase"])
 print "Done with uninstall"
-subprocess.check_output([os.getcwd() + "/" + good_installer + "/" + file_list[0], "-s"])
+subprocess.check_output([os.getcwd() + "/" + good_installer + "/" + file_list[0], "-s", "--ssl-cert=/root/cert.pem", "--ssl-priv-key=/root/key.pem"])
 print "Done with install"

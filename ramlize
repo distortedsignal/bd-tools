@@ -1,6 +1,5 @@
 export ApiDocsPath=$everest/mgmt/controller/server/apidocs
 echo $ApiDocsPath
 for RamlFile in $( ls -a $ApiDocsPath | grep "raml" ); do
-    echo $ApiDocsPath/$RamlFile
     raml-cop $ApiDocsPath/$RamlFile
 done

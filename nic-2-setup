@@ -1,0 +1,9 @@
+#! /bin/bash
+
+# Edit the file
+sed -i 's/ONBOOT=no/ONBOOT=yes/g' /etc/sysconfig/network-scripts/ifcfg-ens224
+sed -i 's/BOOTPROTO=dhcp/BOOTPROTO=none/g' /etc/sysconfig/network-scripts/ifcfg-ens224
+
+# OS Stuff I don't understand
+ifup ens224
+systemctl restart network

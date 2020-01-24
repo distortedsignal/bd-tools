@@ -6,26 +6,32 @@ import sys
 
 cmd_list = ['/usr/local/bin/erlc', '-W']
 include_dir_list = [
-    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/bd_logger/include',
-    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/bds_memq/include',
-    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/data_server/include',
-    '/Users/tom/Documents/src/BlueData/everest/io/base/private/include',
-    '/Users/tom/Documents/src/BlueData/everest/io/base/tools/bds_io_bqs/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_ha/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_hypervisor_agent/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_hypervisor_controller/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/legacy_include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_throttle/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_hypervisor_controller/legacy_include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_hypervisor_controller/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_kube_authn/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_util/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_mgmt/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_mgmt/legacy_include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_hypervisor_agent/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_os_client/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_throttle/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_util/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/mochiweb/test',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/mochiweb/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/mochiweb/examples/hmac_api',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/esaml/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/esaml/src',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/uuid/src',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_ha/include',
     '/Users/tom/Documents/src/BlueData/everest/mgmt/vm/vagent/bd_vagent/include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/shared/bd_shared/legacy_include',
-    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/bd_kube_authn/include'
+    '/Users/tom/Documents/src/BlueData/everest/io/base/tools/bds_io_bqs/include',
+    '/Users/tom/Documents/src/BlueData/everest/io/base/ct',
+    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/bds_memq/include',
+    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/data_server/include',
+    '/Users/tom/Documents/src/BlueData/everest/io/base/apps/bd_logger/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/esaml/include',
+    '/Users/tom/Documents/src/BlueData/everest/mgmt/controller/server/deps/esaml/src'
 ]
 cmd_out_dir_list = ['-o', '/tmp']
 
@@ -54,7 +60,10 @@ def main():
         file_lint_command = list(cmd_list)
         file_lint_command.append(filepath)
 
-        lint_command_good_output = subprocess.check_output(file_lint_command)
+        try:
+            lint_command_good_output = subprocess.check_output(file_lint_command)
+        except:
+            continue
 
         file_lines = file_content.split('\n')
         new_file = list(file_lines)
