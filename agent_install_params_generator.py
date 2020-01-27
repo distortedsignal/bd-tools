@@ -227,33 +227,23 @@ What type of worker would you like to install?
 
         print 'Invalid choice - repeating the question'
 
-def get_ip_addr_string():
-    print '''Please input the IP Address of the current host
-'''
-    ip_addr_str = raw_input('> ')
-    return ip_addr_str
-
-def get_hostname_string():
-    # Later, change this to `hostname -f`
-    print '''Please input the hostname of the current host
-'''
-    hostname_str = raw_input('> ')
-    return hostname_str
+import socket
 
 def get_choices_for_worker():
-    ip_addr_str = get_ip_addr_string()
+    hostname = socket.gethostname()
+    ip_addr_str = socket.gethostbyname(hostname)
 
-    hostname = get_hostname_string()
     return 'NODE_TYPE=worker\nWORKER='+ip_addr_str+'\nWORKER_HOSTNAME='+hostname+'\n'
 
 def get_choices_for_gateway():
-    ip_addr_str = get_ip_addr_string()
-
-    hostname = get_hostname_string()
+    hostname = socket.gethostname()
+    ip_addr_str = socket.gethostbyname(hostname)
+    
     return 'NODE_TYPE=proxy\nGATEWAY_NODE_IP='+ip_addr_str+'\nGATEWAY_NODE_FQDN='+hostname+'\n'
 
 def get_choices_for_k8s_host():
-    ip_addr_str = get_ip_addr_string()
+    hostname = socket.gethostname()
+    ip_addr_str = socket.gethostbyname(hostname)
     return 'NODE_TYPE=k8shost\nWORKER='+ip_addr_str+'\n'
 
 def get_install_force():
