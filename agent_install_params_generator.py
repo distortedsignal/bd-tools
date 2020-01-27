@@ -444,6 +444,8 @@ the current one being installed, check the output from its
 supply that value here. The current (default) value
 is "overlay2", and "devicemapper" is the other (older) option.'''
     docker_storage_driver = raw_input('> ')
+    if docker_storage_driver == '' or docker_storage_driver == '\n':
+        docker_storage_driver = 'overlay2'
 
     network_params_acc = ''
 
