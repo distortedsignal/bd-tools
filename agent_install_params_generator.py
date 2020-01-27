@@ -202,11 +202,12 @@ def greet_user():
 
 '''
 
-valid_host_choices  = [1, 2, 3]
-valid_force_choices = [1, 2]
-valid_hdfs_choices  = [1, 2, 3]
-valid_ha_choices    = [1, 2]
-valid_ntp_config    = [1, 2, 3]
+valid_host_choices     = ["1", "2", "3"]
+valid_force_choices    = ["1", "2"]
+valid_hdfs_choices     = ["1", "2", "3"]
+valid_ha_choices       = ["1", "2"]
+valid_ntp_config       = ["1", "2", "3"]
+valid_rollback_chioces = ["1", "2", "3"]
 
 def get_worker_type():
     while True:
@@ -219,7 +220,7 @@ What type of worker would you like to install?
  2 |       gateway
  3 |      k8s_host
 '''
-        host_choice = input('> ')
+        host_choice = raw_input('> ')
 
         if host_choice in valid_host_choices:
             return host_choice
@@ -229,14 +230,14 @@ What type of worker would you like to install?
 def get_ip_addr_string():
     print '''Please input the IP Address of the current host
 '''
-    ip_addr_str = input('> ')
+    ip_addr_str = raw_input('> ')
     return ip_addr_str
 
 def get_hostname_string():
     # Later, change this to `hostname -f`
     print '''Please input the hostname of the current host
 '''
-    hostname_str = input('> ')
+    hostname_str = raw_input('> ')
     return hostname_str
 
 def get_choices_for_worker():
@@ -265,10 +266,10 @@ The default is false.
  1 | false
  2 |  true
 '''
-        force_choice = input('> ')
-        if force_choice in valid_force_choices and (force_choice - 1):
+        force_choice = raw_input('> ')
+        if force_choice in valid_force_choices and (int(force_choice) - 1):
             return 'FORCE=true\n'
-        elif force_choice in valid_force_choices and not (force_choice - 1):
+        elif force_choice in valid_force_choices and not (int(force_choice) - 1):
             return 'FORCE=false\n'
         else:
             print 'Invalid choice - reprompting'
@@ -277,11 +278,11 @@ def get_user_and_group():
     print '''
 What user was the controller installed under?
 '''
-    user_str = input('> ')
+    user_str = raw_input('> ')
     print '''
 What group was the controller installed under?
 '''
-    group_str = input('> ')
+    group_str = raw_input('> ')
     return 'BLUEDATA_USER='+user_str+'\nBLUEDATA_GROUP='+group_str+'\n'
 
 def get_hdfs_params():
@@ -294,16 +295,16 @@ Should HDFS report the storage type?
  2 | no
  3 | omit from config
 '''
-        hdfs_choice = input('> ')
+        hdfs_choice = raw_input('> ')
         if hdfs_choice not in valid_hdfs_choices:
             print 'Invalid choice for hdfs, reprompting.'
             continue
 
-        if hdfs_choice == 3:
+        if hdfs_choice == "3":
             return '\n'
-        if hdfs_choice == 2:
+        if hdfs_choice == "2":
             return 'REPORT_STORAGE_TYPE=false\n'
-        if hdfs_choice == 1:
+        if hdfs_choice == "1":
             return 'REPORT_STORAGE_TYPE=true\n'
 
 def ha_enabled():
@@ -315,44 +316,44 @@ Is EPIC Platform HA enabled?
  1 |  no
  2 | yes
 '''
-        ha_out = input('> ')
+        ha_out = raw_input('> ')
         if ha_out not in valid_ha_choices:
             print 'Invalid choice for HA enablement, reprompting.'
             continue
 
-        return bool(ha_out - 1)
+        return bool(int(ha_out) - 1)
 
 def get_controller_params():
     print '''Please input the IP address of the controller
 '''
-    ip_addr_str = input('> ')
+    ip_addr_str = raw_input('> ')
 
     print '''Please intput the hostname of the controller
 '''
-    hostname_str = input('> ')
+    hostname_str = raw_input('> ')
     return 'HAENABLED=false\nCONTROLLER='+ip_addr_str+'\nCONTROLLER_HOSTNAME='+hostname_str+'\n'
 
 def get_ha_controller_params():
     print '''Please input the current (live) controller's IP Address
 '''
-    controller_ip_addr_str = input('> ')
+    controller_ip_addr_str = raw_input('> ')
     print '''Please intput the current shadow controller's IP Address
 '''
-    shadow_ip_addr_str = input('> ')
+    shadow_ip_addr_str = raw_input('> ')
     print '''Please input the current arbiter's IP Address
 '''
-    arbiter_ip_addr_str = input('> ')
+    arbiter_ip_addr_str = raw_input('> ')
     print '''Please input the current (live) controller's hostname
 '''
-    controller_hostname = input('> ')
+    controller_hostname = raw_input('> ')
     print '''Please input the current shadow's hostname
 '''
-    shadow_hostname = input('> ')
+    shadow_hostname = raw_input('> ')
     print '''Please input the current arbiter's hostname
 '''
-    arbiter_hostname = input('> ')
-    return 'HAENABLED=true\nCONTROLLER='+controller_ip_addr_str+'\nSHADOWCTL='+shadow_ip_addr_str+
-        '\nARBITER='+arbiter_ip_addr_str+'\nCONTROLLER_HOSTNAME='+controller_hostname+
+    arbiter_hostname = raw_input('> ')
+    return 'HAENABLED=true\nCONTROLLER='+controller_ip_addr_str+'\nSHADOWCTL='+shadow_ip_addr_str+\
+        '\nARBITER='+arbiter_ip_addr_str+'\nCONTROLLER_HOSTNAME='+controller_hostname+\
         '\nSHADOW_HOSTNAME='+shadow_hostname+'\nARBITER_HOSTNAME='+arbiter_hostname+'\n'
 
 def get_misc_params():
@@ -361,14 +362,14 @@ NOTE: this must be the same on ALL hosts.
 The default for this is "/net/" - this is probably correct,
 but if it is not, please provide the correct directory.
 '''
-    automount_dir = input('> ')
+    automount_dir = raw_input('> ')
     if automount_dir == '' or automount_dir == '\n':
         automount_dir = "/net/"
 
     print '''Please input the controller bundle flavor.
 The default is "minimal".
 '''
-    bundle_flavor = input('> ')
+    bundle_flavor = raw_input('> ')
     if bundle_flavor == '' or bundle_flavor == '\n':
         bundle_flavor = "minimal"
     while True:
@@ -379,15 +380,15 @@ The default is "minimal".
  2 |  false
  3 | ignore
 '''
-        ntp_config = input('> ')
+        ntp_config = raw_input('> ')
         if ntp_config not in valid_ntp_config:
             print 'Not a valid value for NTP config. Reprompting.'
             continue
-        if ntp_config == 1:
+        if ntp_config == "1":
             return 'CONTROLLER_AUTOMOUNT_ROOT='+automount_dir+'\nCONTROLLER_BUNDLE_FLAVOR='+bundle_flavor+'\nNO_NTP_CONFIG=true\n'
-        if ntp_config == 2:
+        if ntp_config == "2":
             return 'CONTROLLER_AUTOMOUNT_ROOT='+automount_dir+'\nCONTROLLER_BUNDLE_FLAVOR='+bundle_flavor+'\nNO_NTP_CONFIG=false\n'
-        if ntp_config == 3:
+        if ntp_config == "3":
             return 'CONTROLLER_AUTOMOUNT_ROOT='+automount_dir+'\nCONTROLLER_BUNDLE_FLAVOR='+bundle_flavor+'\n'
 
 def get_internal_params():
@@ -396,16 +397,16 @@ def get_internal_params():
 def get_network_parameters():
     print '''Please input the proxy url
 '''
-    proxy_url = input('> ')
+    proxy_url = raw_input('> ')
     print '''Please input the no-proxy list
 '''
-    no_proxy = input('> ')
+    no_proxy = raw_input('> ')
     print '''Please input the vxlan port.
 The default is 4789.
 '''
-    vxlan_port_int = input('> ')
-    if vxlan_port_int == '' or vxlan_port_int == '\n':
-        vxlan_port_int = 4789
+    vxlan_port = raw_input('> ')
+    if vxlan_port == '' or vxlan_port == '\n':
+        vxlan_port = "4789"
     full_rollback_flag = ''
     while True:
         print '''Please input whether install should be rolled back on errors.
@@ -415,16 +416,16 @@ The default is 4789.
  2 | No Rollback on errors
  3 | Ignore
 '''
-        rollback_chioce = input('> ')
-        if rollback_chioce not in rollback_chioces:
+        rollback_chioce = raw_input('> ')
+        if rollback_chioce not in valid_rollback_chioces:
             print 'Not a valid value for the Rollback flag. Reprompting.'
             continue
 
-        if rollback_chioce == 1:
+        if rollback_chioce == "1":
             full_rollback_flag += """ROLLBACK_ON_ERROR='true'""" + '\n'
-        if rollback_chioce == 2:
+        if rollback_chioce == "2":
             full_rollback_flag += """ROLLBACK_ON_ERROR='false'""" + '\n'
-        if full_rollback_flag == 3:
+        if full_rollback_flag == "3":
             full_rollback_flag += '\n'
 
         break
@@ -432,14 +433,17 @@ The default is 4789.
     print '''If the controller was configured with --dockerrootsize
 that is different from 20 specify it here.
 '''
-    docker_root_size = input('> ')
+    docker_root_size = raw_input('> ')
+
+    if docker_root_size == '' or docker_root_size == '\n':
+        docker_root_size = "20"
 
     print '''If the controller was upgraded from a version prior to
 the current one being installed, check the output from its
 "bdconfig --getvalue bds_storage_dockersd" command, and
 supply that value here. The current (default) value
 is "overlay2", and "devicemapper" is the other (older) option.'''
-    docker_storage_driver = input('> ')
+    docker_storage_driver = raw_input('> ')
 
     network_params_acc = ''
 
@@ -449,17 +453,23 @@ is "overlay2", and "devicemapper" is the other (older) option.'''
     if no_proxy:
         network_params_acc += 'NO_PROXY='+no_proxy+'\n'
 
-    return network_params_acc+'VXLANPORT='+str(vxlan_port_int)+'\n'+full_rollback_flag+
-        'DOCKER_ROOTSIZE='+str(docker_root_size)+'\nDOCKER_STORAGE_DRIVER='+
+    return network_params_acc+'VXLANPORT='+vxlan_port+'\n'+full_rollback_flag+\
+        'DOCKER_ROOTSIZE='+docker_root_size+'\nDOCKER_STORAGE_DRIVER='+\
         docker_storage_driver+'\n'
 
 def get_dnsmasq_values():
     print '''Please input DNSMASQ_USER
+The default is "nobody"
 '''
-    user = input('> ')
+    user = raw_input('> ')
+    if user == '' or user == '\n':
+        user = 'nobody'
     print '''Please input DNSMASQ_GROUP
+The default is "nobody"
 '''
-    group = input('> ')
+    group = raw_input('> ')
+    if group == '' or group == '\n':
+        group = 'nobody'
 
     return 'DNSMASQ_USER='+user+'\nDNSMASQ_GRP='+group+'\n'
 
@@ -470,13 +480,13 @@ def main():
 
     host_type_enum = get_worker_type()
 
-    if host_type_enum == 1:
+    if host_type_enum == "1":
         # We got a worker install
         params_file_acc += get_choices_for_worker()
-    if host_type_enum == 2:
+    if host_type_enum == "2":
         # We got a gateway install
         params_file_acc += get_choices_for_gateway()
-    if host_type_enum == 3:
+    if host_type_enum == "3":
         # We got a k8s host install
         params_file_acc += get_choices_for_k8s_host()
 
@@ -507,7 +517,7 @@ This will be persisted to the worker.params file.
 '''
     f = open('worker.params', 'w')
     f.write(params_file_acc)
-    print 'Goodby.'
+    print 'Goodbye.'
 
 if __name__ == '__main__':
     main()
