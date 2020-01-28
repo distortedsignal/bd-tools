@@ -342,7 +342,7 @@ def get_ha_controller_params():
     print '''Please input the current arbiter's hostname
 '''
     arbiter_hostname = raw_input('> ')
-    return 'HAENABLED=true\nCONTROLLER='+controller_ip_addr_str+'\nSHADOWCTL='+shadow_ip_addr_str+\
+    return 'HAENABLED=true\nCONTROLLER='+controller_ip_addr_str+'\nSHADOWCTRL='+shadow_ip_addr_str+\
         '\nARBITER='+arbiter_ip_addr_str+'\nCONTROLLER_HOSTNAME='+controller_hostname+\
         '\nSHADOW_HOSTNAME='+shadow_hostname+'\nARBITER_HOSTNAME='+arbiter_hostname+'\n'
 
