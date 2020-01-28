@@ -314,32 +314,40 @@ Is EPIC Platform HA enabled?
         return bool(int(ha_out) - 1)
 
 def get_controller_params():
-    print '''Please input the IP address of the controller
+    print '''
+Please input the IP address of the controller
 '''
     ip_addr_str = raw_input('> ')
 
-    print '''Please intput the hostname of the controller
+    print '''
+Please intput the hostname of the controller
 '''
     hostname_str = raw_input('> ')
     return 'HAENABLED=false\nCONTROLLER='+ip_addr_str+'\nCONTROLLER_HOSTNAME='+hostname_str+'\n'
 
 def get_ha_controller_params():
-    print '''Please input the current (live) controller's IP Address
+    print '''
+Please input the current (live) controller's IP Address
 '''
     controller_ip_addr_str = raw_input('> ')
-    print '''Please intput the current shadow controller's IP Address
+    print '''
+Please intput the current shadow controller's IP Address
 '''
     shadow_ip_addr_str = raw_input('> ')
-    print '''Please input the current arbiter's IP Address
+    print '''
+Please input the current arbiter's IP Address
 '''
     arbiter_ip_addr_str = raw_input('> ')
-    print '''Please input the current (live) controller's hostname
+    print '''
+Please input the current (live) controller's hostname
 '''
     controller_hostname = raw_input('> ')
-    print '''Please input the current shadow's hostname
+    print '''
+Please input the current shadow's hostname
 '''
     shadow_hostname = raw_input('> ')
-    print '''Please input the current arbiter's hostname
+    print '''
+Please input the current arbiter's hostname
 '''
     arbiter_hostname = raw_input('> ')
     return 'HAENABLED=true\nCONTROLLER='+controller_ip_addr_str+'\nSHADOWCTRL='+shadow_ip_addr_str+\
@@ -347,7 +355,8 @@ def get_ha_controller_params():
         '\nSHADOW_HOSTNAME='+shadow_hostname+'\nARBITER_HOSTNAME='+arbiter_hostname+'\n'
 
 def get_misc_params():
-    print '''Please input the automount directory on the controller.
+    print '''
+Please input the automount directory on the controller.
 NOTE: this must be the same on ALL hosts.
 The default for this is "/net/" - this is probably correct,
 but if it is not, please provide the correct directory.
@@ -356,14 +365,16 @@ but if it is not, please provide the correct directory.
     if automount_dir == '' or automount_dir == '\n':
         automount_dir = "/net/"
 
-    print '''Please input the controller bundle flavor.
+    print '''
+Please input the controller bundle flavor.
 The default is "minimal".
 '''
     bundle_flavor = raw_input('> ')
     if bundle_flavor == '' or bundle_flavor == '\n':
         bundle_flavor = "minimal"
     while True:
-        print '''Please input the value for the NO_NTP_CONFIG flag.
+        print '''
+Please input the value for the NO_NTP_CONFIG flag.
 
 ###|#######
  1 |   true
@@ -385,13 +396,16 @@ def get_internal_params():
     return 'ONWORKER=true\nAGENT_INSTALL=true\n'
 
 def get_network_parameters():
-    print '''Please input the proxy url
+    print '''
+Please input the proxy url
 '''
     proxy_url = raw_input('> ')
-    print '''Please input the no-proxy list
+    print '''
+Please input the no-proxy list
 '''
     no_proxy = raw_input('> ')
-    print '''Please input the vxlan port.
+    print '''
+Please input the vxlan port.
 The default is 4789.
 '''
     vxlan_port = raw_input('> ')
@@ -399,7 +413,8 @@ The default is 4789.
         vxlan_port = "4789"
     full_rollback_flag = ''
     while True:
-        print '''Please input whether install should be rolled back on errors.
+        print '''
+Please input whether install should be rolled back on errors.
 
 ###|######################
  1 | Rollback on errors
@@ -420,7 +435,8 @@ The default is 4789.
 
         break
 
-    print '''If the controller was configured with --dockerrootsize
+    print '''
+If the controller was configured with --dockerrootsize
 that is different from 20 specify it here.
 '''
     docker_root_size = raw_input('> ')
@@ -428,7 +444,8 @@ that is different from 20 specify it here.
     if docker_root_size == '' or docker_root_size == '\n':
         docker_root_size = "20"
 
-    print '''If the controller was upgraded from a version prior to
+    print '''
+If the controller was upgraded from a version prior to
 the current one being installed, check the output from its
 "bdconfig --getvalue bds_storage_dockersd" command, and
 supply that value here. The current (default) value
@@ -450,13 +467,15 @@ is "overlay2", and "devicemapper" is the other (older) option.'''
         docker_storage_driver+'\n'
 
 def get_dnsmasq_values():
-    print '''Please input DNSMASQ_USER
+    print '''
+Please input DNSMASQ_USER
 The default is "nobody"
 '''
     user = raw_input('> ')
     if user == '' or user == '\n':
         user = 'nobody'
-    print '''Please input DNSMASQ_GROUP
+    print '''
+Please input DNSMASQ_GROUP
 The default is "nobody"
 '''
     group = raw_input('> ')
@@ -501,7 +520,8 @@ def main():
 
     params_file_acc += get_internal_params()
 
-    print '''Output from this program will look like this:
+    print '''
+Output from this program will look like this:
 
 ''' + params_file_acc + '''
 
