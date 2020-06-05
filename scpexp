@@ -5,6 +5,6 @@ set filename [lindex $argv 1]
 set host [lindex $argv 0]
 
 spawn scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -C $filename root@$host:~
-expect "password:"
+expect -nocase "password:"
 send "admin123\r"
 interact

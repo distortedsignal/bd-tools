@@ -9,5 +9,6 @@ scpexp $1 ~/.utils/djangoshell
 scpexp $1 ~/.utils/nfs-exporter
 scpexp $1 ~/.utils/nic-2-setup
 scpexp $1 ~/.utils/agent_install_params_generator.py
+scpexp $1 ~/.utils/add_bdhost_user.sh
 scpexp $1 ~/.vimrc
 scpexp $1 ~/.bashrc

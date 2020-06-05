@@ -9,11 +9,15 @@ function pyf-branch () {
     pyflakes $(files-changed $1 | grep ".py")
 }
 
+function translate-src-to-beam() {
+    echo $1 | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/' | sed 's/\/k8s//' | sed 's/mgmt\/controller\/server\/apps\//build\/debug\/6\/mgmt\/default\/lib\//'
+}
+
 function move-changed () {
     if [ $# -eq "1" ]
     then
         for CHANGEPATH in $(files-changed | grep "erl"); do
-            BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/' | sed 's/\/k8s//')
+            BEAMPATH=$(translate-src-to-beam $CHANGEPATH)
             echo "Beam path: $BEAMPATH"
             scpexp $1 $everest/$BEAMPATH
         done
@@ -22,7 +26,7 @@ function move-changed () {
     if [ $# -eq "2" ]
     then
         for CHANGEPATH in $(files-changed $2 | grep "erl"); do
-            BEAMPATH=$(echo $CHANGEPATH | sed 's/\/src\//\/ebin\//' | sed 's/\.erl/\.beam/' | sed 's/\/k8s//')
+            BEAMPATH=$(translate-src-to-beam $CHANGEPATH)
             scpexp $1 $everest/$BEAMPATH
         done
     fi
