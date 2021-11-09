@@ -24,7 +24,7 @@ then
     exit 4
 fi
 
-OLD_OUT=$(trivy -q i -f json $1)
+OLD_OUT=$(trivy -q i -f json $1 &> /dev/null)
 
 if [[ "$?" -ne "0" ]]
 then
@@ -34,7 +34,7 @@ fi
 
 OLD_OUT=$(trivy -q i -f json $1 | jq '.Results[]? | .Vulnerabilities[]? | .VulnerabilityID' | sort | uniq)
 
-NEW_OUT=$(trivy -q i -f json $2)
+NEW_OUT=$(trivy -q i -f json $2 &> /dev/null)
 
 if [[ $? -ne "0" ]]
 then
