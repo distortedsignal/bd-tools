@@ -24,21 +24,25 @@ then
     exit 4
 fi
 
-OLD_OUT=$(trivy -q i -f json $1 | jq '.Results[]? | .Vulnerabilities[]? | .VulnerabilityID' | sort | uniq)
+OLD_OUT=$(trivy -q i -f json $1 &> /dev/null)
 
-if ! $?
+if [[ "$?" -ne "0" ]]
 then
     echo "trivy only supports scanning on tag names - if the diff process failed, please try scanning against a tag"
     exit 5
 fi
 
-NEW_OUT=$(trivy -q i -f json $2 | jq '.Results[]? | .Vulnerabilities[]? | .VulnerabilityID' | sort | uniq)
+OLD_OUT=$(trivy -q i -f json $1 | jq '.Results[]? | .Vulnerabilities[]? | .VulnerabilityID' | sort | uniq)
 
-if ! $?
+NEW_OUT=$(trivy -q i -f json $2 &> /dev/null)
+
+if [[ $? -ne "0" ]]
 then
     echo "trivy only supports scanning on tag names - if the diff process failed, please try scanning against a tag"
     exit 6
 fi
+
+NEW_OUT=$(trivy -q i -f json $2 | jq '.Results[]? | .Vulnerabilities[]? | .VulnerabilityID' | sort | uniq)
 
 OLD_OUT=("${(@f)OLD_OUT}")
 NEW_OUT=("${(@f)NEW_OUT}")
